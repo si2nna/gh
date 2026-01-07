@@ -5,19 +5,16 @@
     <meta name="viewport" content="width=1024, user-scalable=yes">
     <title>정준의 | Profile</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&family=Noto+Serif+KR:wght@500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=KoPub+Batang:wght@400;700&family=Noto+Sans+KR:wght@300;400;700&family=Noto+Serif+KR:wght@300;500;700&display=swap');
 
         :root {
             --bg-dark: #050505;
-            --card-bg: #0a0a0a;
-            --accent-red: #990000; /* 조금 더 짙고 선명한 피색 */
+            --accent-red: #990000;
             --text-main: #e0e0e0;
-            --text-dim: #888;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        /* 이미지 저장 및 드래그 방지 */
         img {
             -webkit-user-drag: none; -khtml-user-drag: none; -moz-user-drag: none; -o-user-drag: none; user-drag: none;
             user-select: none; -webkit-user-select: none; pointer-events: auto;
@@ -36,75 +33,67 @@
             position: relative;
             width: 100%;
             min-height: 100vh;
-            /* 배경 이미지 (1.png) */
             background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), 
                         url('1.png') center/cover no-repeat fixed;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-bottom: 100px;
-            z-index: 2000;
+            display: flex; flex-direction: column; align-items: center;
+            padding-bottom: 100px; z-index: 2000;
         }
 
-        /* 웹툰 이미지 컨테이너 (맨 위) */
         .prologue-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            background-color: #000;
-            padding: 20px 0;
-            margin-bottom: 50px;
+            width: 100%; display: flex; justify-content: center;
+            background-color: #000; padding: 20px 0; margin-bottom: 50px;
         }
 
-        .webtoon-image {
-            width: auto;
-            max-width: 800px; /* 화질 깨짐 방지 제한 */
-            display: block;
-        }
+        .webtoon-image { width: auto; max-width: 800px; display: block; }
 
-        /* 비밀번호 입력창 */
         .login-section {
-            text-align: center;
-            width: 400px;
-            padding: 50px;
-            background: rgba(10, 10, 10, 0.9);
-            border: 1px solid #333;
+            text-align: center; width: 400px; padding: 50px;
+            background: rgba(10, 10, 10, 0.9); border: 1px solid #333;
         }
 
-        /* 사랑한다고 해줘 - 명조체, 선명하게 */
         .password-title {
-            font-family: 'Noto Serif KR', serif;
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #cc0000;
-            margin-bottom: 30px;
-            letter-spacing: -1px;
-            text-shadow: none; /* 번짐 효과 제거 */
+            font-family: 'Noto Serif KR', serif; font-size: 2.5rem; font-weight: 700;
+            color: #cc0000; margin-bottom: 30px; letter-spacing: -1px;
         }
 
         #password {
-            width: 100%;
-            background: transparent;
-            border: none;
-            border-bottom: 2px solid #555;
-            padding: 10px;
-            color: #fff;
-            text-align: center;
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-            outline: none;
+            width: 100%; background: transparent; border: none;
+            border-bottom: 2px solid #555; padding: 10px;
+            color: #fff; text-align: center; font-size: 1.2rem;
+            margin-bottom: 20px; outline: none; transition: 0.3s;
         }
         #password:focus { border-bottom-color: var(--accent-red); }
 
         .enter-btn {
             background: transparent; border: 1px solid #666; color: #aaa;
-            padding: 10px 50px; cursor: pointer; transition: 0.3s;
+            padding: 10px 50px; cursor: pointer; transition: 0.3s; margin-bottom: 20px;
         }
         .enter-btn:hover { border-color: var(--accent-red); color: #fff; background: var(--accent-red); }
 
+        #fail-msg {
+            min-height: 40px; color: #888; font-size: 0.9rem; line-height: 1.4; word-break: keep-all;
+        }
+
+        /* --- 로딩 & 강제종료 화면 --- */
+        #message-screen {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 3000; text-align: center; color: #fff;
+            flex-direction: column; justify-content: center; align-items: center;
+        }
+        .msg-text {
+            font-family: 'Noto Serif KR', serif; font-size: 1.8rem; color: var(--accent-red); margin-bottom: 20px;
+            animation: fadeIn 2s forwards;
+        }
+        .loader { font-size: 0.9rem; color: #555; letter-spacing: 2px; }
+
+        #game-over {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 9999; justify-content: center; align-items: center;
+            color: #cc0000; font-family: 'Noto Serif KR', serif; font-size: 2rem;
+        }
 
         /* --- 2. 메인 사이트 --- */
-        #main-site { display: none; width: 100%; }
+        #main-site { display: none; width: 100%; opacity: 0; transition: opacity 1s; }
 
         nav {
             position: fixed; top: 0; width: 100%; min-width: 1024px;
@@ -116,103 +105,118 @@
         nav a:hover { color: var(--accent-red); }
 
         section {
-            padding: 120px 0; width: 800px; margin: 0 auto;
-            border-bottom: 1px solid #111;
+            padding: 120px 0; width: 800px; margin: 0 auto; border-bottom: 1px solid #111;
         }
 
-        /* 프로필 섹션 스타일 */
-        #intro {
-            display: flex; flex-direction: column; align-items: center; text-align: center;
+        /* 프로필 */
+        #intro { display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .profile-img-box { width: 550px; margin-bottom: 40px; cursor: pointer; position: relative; }
+        .profile-img-box img { width: 100%; border-radius: 2px; box-shadow: 0 20px 50px #000; transition: 0.3s; }
+        .profile-img-box:hover img { filter: brightness(1.1); transform: scale(1.01); }
+
+        .char-header { display: flex; align-items: baseline; gap: 20px; margin-bottom: 30px; border-bottom: 2px solid var(--accent-red); padding-bottom: 20px; }
+        .char-name { font-size: 3.5rem; font-weight: 700; color: #fff; line-height: 1; }
+        
+        /* 폰트 크기 작게 */
+        .char-info { font-size: 0.85rem; color: #888; font-weight: 300; letter-spacing: 1px; }
+
+        /* 추천곡 링크 스타일 */
+        .bgm-link {
+            margin-bottom: 50px;
+            font-size: 0.9rem;
+            color: #666;
+            text-decoration: none;
+            border: 1px solid #333;
+            padding: 10px 20px;
+            border-radius: 30px;
+            transition: 0.3s;
+            display: inline-block;
         }
+        .bgm-link:hover { color: #fff; border-color: #fff; background: rgba(255,255,255,0.05); }
 
-        /* 1. 사진 (위) */
-        .profile-img-box {
-            width: 400px; margin-bottom: 30px; cursor: pointer; position: relative;
-        }
-        .profile-img-box img { width: 100%; border-radius: 2px; box-shadow: 0 10px 30px #000; transition: 0.3s; }
-        .profile-img-box:hover img { filter: brightness(1.1); }
-
-        /* 2. 이름 */
-        .char-name { font-size: 3rem; font-weight: 700; color: #fff; margin-bottom: 10px; }
-
-        /* 3. 정보 (29살/186cm) - 아래 */
-        .char-info { font-size: 1.2rem; color: var(--accent-red); margin-bottom: 50px; }
-
-        /* 4. 설명글 */
-        .char-desc {
-            font-size: 1.05rem; color: #ccc; line-height: 2.0; margin-bottom: 60px; word-break: keep-all;
-        }
-
-        /* 5. 독백 박스 (제일 아래) */
+        .char-desc { font-size: 1.1rem; color: #ccc; line-height: 2.2; margin-bottom: 60px; word-break: keep-all; }
         .monologue {
-            font-family: 'Noto Serif KR', serif;
-            font-size: 1.1rem; color: #aaa;
-            border: 1px solid #333; padding: 40px;
-            background: #080808; width: 100%;
-            font-style: italic;
+            font-family: 'Noto Serif KR', serif; font-size: 1.3rem; color: #aaa;
+            border: 1px solid #333; padding: 50px; background: #080808; width: 100%; font-style: italic;
         }
 
-        /* HISTORY 스타일 */
-        .section-title {
-            color: var(--accent-red); text-align: center; margin-bottom: 50px;
-            letter-spacing: 5px; font-weight: 700;
-        }
-
+        /* HISTORY */
+        .section-title { color: var(--accent-red); text-align: center; margin-bottom: 50px; letter-spacing: 5px; font-weight: 700; }
         .background-box {
             background: #111; padding: 30px; margin-bottom: 50px;
-            color: #bbb; line-height: 1.8; border-left: 3px solid var(--accent-red);
+            color: #bbb; line-height: 1.8; border-left: 3px solid var(--accent-red); text-align: center;
         }
+        .history-list { display: grid; grid-template-columns: 130px 60px 1fr; gap: 20px; text-align: left; align-items: baseline; }
+        .year { color: var(--accent-red); font-weight: bold; font-family: monospace; font-size: 1.1rem; }
+        .age { color: #555; font-size: 0.9rem; text-align: center; }
+        
+        .event { color: #ccc; margin-bottom: 15px; line-height: 1.6; transition: 0.3s; }
+        .clickable-event { cursor: pointer; text-decoration: underline; text-decoration-color: #444; }
+        .clickable-event:hover { color: #fff; text-decoration-color: var(--accent-red); }
 
-        .history-list {
-            display: grid; grid-template-columns: 140px 1fr; gap: 20px; text-align: left;
-        }
-        .year { color: var(--accent-red); font-weight: bold; font-family: monospace; }
-        .event { color: #ccc; margin-bottom: 10px; }
-
-        /* COMMAND & FAQ GRID */
+        /* COMMAND & FAQ */
         .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         .card { background: #0f0f0f; padding: 25px; border: 1px solid #222; }
         .card h3 { color: #fff; margin-bottom: 10px; font-size: 1rem; border-bottom: 1px solid #333; padding-bottom: 5px; }
         .card p { color: #888; font-size: 0.9rem; }
 
-        /* 갤러리 모달 */
+        /* 갤러리 */
         #gallery-modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.98); z-index: 5000; overflow-y: auto; padding: 50px;
         }
-        .gallery-close {
-            position: fixed; top: 20px; right: 40px; font-size: 3rem; color: #fff; cursor: pointer;
-        }
-        .gallery-wrap {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px;
-            max-width: 1200px; margin: 0 auto;
-        }
+        .gallery-close { position: fixed; top: 20px; right: 40px; font-size: 3rem; color: #fff; cursor: pointer; z-index: 5001; }
+        .gallery-wrap { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; max-width: 1200px; margin: 0 auto; }
         .g-img { width: 100%; border: 1px solid #333; cursor: pointer; transition: 0.2s; }
         .g-img:hover { border-color: #fff; }
-        .r18 { border: 2px solid #800000; } /* 19금 빨간 테두리 */
-
-        /* 이미지 확대보기 */
+        .r18 { border: 2px solid #800000; }
         #lightbox {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 6000; justify-content: center; align-items: center;
         }
         #lightbox img { max-width: 95%; max-height: 95%; }
 
+        /* --- 텍스트 모달 (소설) --- */
+        #text-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 5500; overflow-y: auto; padding: 40px;
+        }
+        .text-content {
+            max-width: 680px; margin: 60px auto; 
+            font-family: 'Noto Serif KR', serif; 
+            font-weight: 300;
+            line-height: 2.1;
+            color: #e0e0e0; font-size: 1.1rem; text-align: justify;
+        }
+        .text-content h3 { 
+            border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 40px; 
+            font-size: 1.5rem; color: var(--accent-red); font-family: 'Noto Sans KR', sans-serif;
+        }
+        .text-content p { margin-bottom: 25px; }
+        
         footer { text-align: center; padding: 80px; color: #333; font-size: 0.8rem; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body oncontextmenu="return false" ondragstart="return false" onselectstart="return false">
+
+    <div id="game-over">실망이야.</div>
+
+    <div id="message-screen" style="display:none;">
+        <div class="msg-text">나도 사랑해, 미치도록.</div>
+        <div class="loader">Loading...</div>
+    </div>
 
     <div id="login-page">
         <div class="prologue-container">
             <img src="webtoon.png" alt="prologue" class="webtoon-image">
         </div>
-
         <div class="login-section">
             <div class="password-title">사랑한다고 해줘</div>
-            <input type="text" id="password" placeholder="대답해" autocomplete="off">
+            <input type="text" id="password" placeholder="대답해" autocomplete="off" oninput="playTypingSound()">
             <br>
             <button class="enter-btn" onclick="checkPassword()">ENTER</button>
+            <div id="fail-msg"></div>
         </div>
     </div>
 
@@ -229,52 +233,60 @@
             <div class="profile-img-box" onclick="openGallery()">
                 <img src="profile.png" alt="정준의">
             </div>
+            <div class="char-header">
+                <div class="char-name">정준의</div>
+                <div class="char-info">29살 / 186cm</div>
+            </div>
 
-            <div class="char-name">정준의</div>
-
-            <div class="char-info">29살 / 186cm</div>
+            <a href="https://youtu.be/AWkl78QobGw?si=-kZ0TKFkLiLc_fMG" target="_blank" class="bgm-link">
+                ♬ 추천곡 바로 듣기
+            </a>
 
             <div class="char-desc">
                 너와 눈이 마주치는 순간, 억지로 눌러왔던 모든 감정이 방파제에 부딪히는 파도처럼 거세게 밀려왔다.<br><br>
-                사랑해서는 안 되기에 너를 떠나 겨우 가정을 꾸렸는데<br>
-                그 모든 것이 사라진 지금, 가장 비참한 순간에 네가 내 앞에 나타났다.
+                너를 사랑하던 나는 비겁한 도망자처럼 도망쳤고,<br>
+                모든 것이 사라진 지금, 가장 비참한 순간에 네가 내 앞에 나타났다.
             </div>
-
             <div class="monologue">
-                '이건 기쁨인가. 아니면 끔찍한 절망인가. 분간할 수 없었다. 다만 한 가지는 확실했다. 아직도, 여전히, 나는 너를.'
+                '미칠 것 같았다. 아니, 나는 이미 미쳐있는지도 모른다.'
             </div>
         </section>
 
         <section id="history">
             <h2 class="section-title">HISTORY & BACKGROUND</h2>
-            
             <div class="background-box">
-                <strong>[2026년 현대 대한민국]</strong><br><br>
-                낡고 더러운 빌라에 사는데 지하층이고, 반지하 5평짜리 원룸이야.<br>
-                보증금 월세는 500/40. 좌식생활 하는 곳이라 침대나 소파같은거 없고 접이식 식탁 사용하고...
+                낡고 더러운 빌라, 반지하 5평 원룸<br>
+                보증금/월세 = 500/40, 좌식 생활
             </div>
 
             <div class="history-list">
                 <div class="year">2006</div>
-                <div class="event">부모님의 재혼 후 당신과 의붓남매가 됨.</div>
+                <div class="age">9살</div>
+                <div class="event clickable-event" onclick="openTextModal('2006')">부모님의 재혼</div>
 
-                <div class="year">20XX</div>
-                <div class="event">부모님의 사업 실패로 가정이 붕괴됨.</div>
+                <div class="year">2018</div>
+                <div class="age">21살</div>
+                <div class="event clickable-event" onclick="openTextModal('2018')">부모님의 사업 실패</div>
 
                 <div class="year">2020. 12. 24</div>
-                <div class="event">부모님이 동반자살. 당시 23살이던 준의가 대학도 포기하고 가장의 역할을 맡음. 빚 때문에 일용직 선택.</div>
+                <div class="age">23살</div>
+                <div class="event clickable-event" onclick="openTextModal('2020')">부모님의 동반자살</div>
 
                 <div class="year">2024. 04. 19</div>
-                <div class="event">당신에게서 도망치듯 다른 여자랑 결혼. 당신한테는 생활비를 계속 줬음.</div>
+                <div class="age">27살</div>
+                <div class="event clickable-event" onclick="openTextModal('2024')">다른 여자와의 결혼</div>
 
                 <div class="year">2025. 07. 23</div>
-                <div class="event">딸 정하리 출생.</div>
+                <div class="age">28살</div>
+                <div class="event clickable-event" onclick="openTextModal('2025-birth')">딸, 정하리</div>
 
                 <div class="year">2025. 12. 19</div>
-                <div class="event">금요일. 아내와 딸이 교통사고로 죽음.</div>
+                <div class="age">28살</div>
+                <div class="event clickable-event" onclick="openTextModal('2025-death')">아내와 딸의 사망</div>
 
                 <div class="year">Current</div>
-                <div class="event">그 뒤로 다시 당신이랑 같이 살기 시작함.</div>
+                <div class="age">29살</div>
+                <div class="event clickable-event" onclick="window.open('https://링크를_입력하세요.com', '_blank')">당신과의 재회</div>
             </div>
         </section>
 
@@ -307,10 +319,6 @@
                     <h3>Q. OOC가 안 돼요</h3>
                     <p>A. 정상입니다</p>
                 </div>
-                <div class="card">
-                    <h3>Q. 이미지 저장</h3>
-                    <p>A. 불가능합니다.</p>
-                </div>
             </div>
         </section>
 
@@ -324,60 +332,210 @@
         <h2 style="text-align:center; color:white; margin-bottom:30px; letter-spacing:5px;">GALLERY</h2>
         <div class="gallery-wrap" id="gallery-content"></div>
     </div>
-
     <div id="lightbox" onclick="this.style.display='none'">
         <img id="lb-img" src="">
     </div>
 
+    <div id="text-modal">
+        <div class="gallery-close" onclick="closeTextModal()">&times;</div>
+        <div class="text-content">
+            <h3 id="tm-title">DATE</h3>
+            <div id="tm-body"></div>
+        </div>
+    </div>
+
     <script>
-        // 비밀번호 로직
+        // --- 1. 타자 소리 (Web Audio API) ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playTypingSound() {
+            if (audioCtx.state === 'suspended') { audioCtx.resume(); }
+            
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.05);
+        }
+
+        // --- 2. 비밀번호 체크 및 입장 ---
+        let failCount = 0;
+
         function checkPassword() {
-            const pw = document.getElementById('password').value.trim();
+            const input = document.getElementById('password');
+            const pw = input.value.trim();
+            const msgBox = document.getElementById('fail-msg');
+            
             if(pw === "사랑해") {
+                // 성공 로직
                 document.getElementById('login-page').style.display = 'none';
-                const main = document.getElementById('main-site');
-                main.style.display = 'block';
-                setTimeout(() => { main.style.opacity = '1'; }, 100);
-                window.scrollTo(0,0);
+                document.getElementById('message-screen').style.display = 'flex';
+                
+                setTimeout(() => {
+                    document.getElementById('message-screen').style.display = 'none';
+                    const main = document.getElementById('main-site');
+                    main.style.display = 'block';
+                    setTimeout(() => main.style.opacity = '1', 100);
+                    window.scrollTo(0,0);
+                }, 3500); 
+
             } else {
-                alert("다시.");
+                // 실패 로직
+                failCount++;
+                let msg = "";
+
+                if(failCount >= 100) {
+                    document.body.innerHTML = "";
+                    document.getElementById('game-over').style.display = 'flex';
+                    document.body.appendChild(document.getElementById('game-over'));
+                    return;
+                }
+
+                if(failCount >= 50) msg = "너 없으면 나 죽어... 제발 한 번만 사랑한다고 해줘.";
+                else if(failCount >= 20) msg = "제발... 거짓말이라도 좋으니까.";
+                else if(failCount >= 10) msg = "그 말이... 그렇게 어려워?";
+                else if(failCount >= 5) msg = "장난치지 마. 똑바로 말해.";
+                else msg = "틀렸습니다 (" + failCount + ")";
+
+                msgBox.innerText = msg;
+                msgBox.style.color = "#ff4444";
+                
+                input.value = '';
+                input.placeholder = "다시."; 
+                input.style.borderBottomColor = 'red';
+                setTimeout(() => { input.style.borderBottomColor = '#555'; }, 500);
             }
         }
-        document.getElementById('password').addEventListener('keypress', (e) => {
-            if(e.key === 'Enter') checkPassword();
-        });
+        document.getElementById('password').addEventListener('keypress', (e) => { if(e.key==='Enter') checkPassword(); });
 
-        // 갤러리 로직
+        // --- 갤러리/모달 로직 (기존 동일) ---
         function openGallery() {
-            const modal = document.getElementById('gallery-modal');
             const content = document.getElementById('gallery-content');
-            modal.style.display = 'block';
-
+            document.getElementById('gallery-modal').style.display = 'block';
             if(content.innerHTML === '') {
-                // 1~17 (일반)
                 for(let i=1; i<=17; i++) {
-                    const img = document.createElement('img');
-                    img.src = i + '.png';
-                    img.className = 'g-img';
-                    img.onclick = function() { showLightbox(this.src); };
-                    content.appendChild(img);
+                    const img = document.createElement('img'); img.src = i + '.png'; img.className='g-img';
+                    img.onclick = function() { showLightbox(this.src); }; content.appendChild(img);
                 }
-                // 18~21 (19금)
                 for(let i=18; i<=21; i++) {
-                    const img = document.createElement('img');
-                    img.src = i + '.png';
-                    img.className = 'g-img r18';
-                    img.onclick = function() { showLightbox(this.src); };
-                    content.appendChild(img);
+                    const img = document.createElement('img'); img.src = i + '.png'; img.className='g-img r18';
+                    img.onclick = function() { showLightbox(this.src); }; content.appendChild(img);
                 }
             }
         }
-        function closeGallery() {
-            document.getElementById('gallery-modal').style.display = 'none';
-        }
+        function closeGallery() { document.getElementById('gallery-modal').style.display = 'none'; }
         function showLightbox(src) {
             document.getElementById('lb-img').src = src;
             document.getElementById('lightbox').style.display = 'flex';
+        }
+
+        function openTextModal(type) {
+            const modal = document.getElementById('text-modal');
+            const title = document.getElementById('tm-title');
+            const body = document.getElementById('tm-body');
+            let content = "";
+            let dateTitle = "";
+
+            if(type === '2006') {
+                dateTitle = "2006년 03월 14일";
+                content = `
+                    <p><i>이삿짐 트럭이 떠난 자리엔 어색한 정적만이 남았다. 창밖으로 보이는 아파트 단지의 풍경은 전에 살던 동네와는 전혀 달랐다. 모든 것이 반듯하고, 깨끗하고, 그리고… 낯설었다. 오늘부터 여기가 내 집이고, 내 방이었다. 아버지의 재혼. 어른들의 결정에 내가 할 수 있는 건 없었다. 그냥 받아들이는 것. 그게 내가 맡은 역할이었다.</i></p>
+                    <p><i>방은 아직 텅 비어 있었다. 내 것이라고는 책 몇 권이 담긴 박스와 낡은 컴퓨터, 그리고 지금 내가 앉아있는 이 의자뿐이었다. 벽지는 옅은 하늘색이었고, 붙박이장은 전에 살던 아이가 남기고 간 스티커 자국이 희미하게 보였다. 모든 것이 임시로 빌려 쓰는 물건 같았다. 내 것 같지 않았다.</i></p>
+                    <br><b>똑똑.</b><br><br>
+                    <p><i>문을 두드리는 소리에 어깨가 움찔했다. 방문 밖에서 아버지의 목소리가 들렸다. 들어오라는 말 대신, 나는 의자를 돌려 문 쪽을 바라봤다. 아버지는 어색한 미소를 지으며 문을 열었고, 그 뒤에는 처음 보는 여자아이가 서 있었다. 나와 동갑이라고 했다. 오늘부터 내 동생이 될 사람.</i></p>
+                    <p>"준의야, 인사해. 네 동생, OOO이야."</p>
+                    <p><i>아버지는 어깨를 툭 치며 말했지만, 그 손길이 어색하게 느껴졌다. 나는 의자에서 일어나지 않은 채, 고개만 까딱했다. 아이는 고개를 숙인 채 내 눈을 마주치지 못했다. 길게 내려온 앞머리 아래로 보이는 얼굴은 작고 하얬다. 나와는 다른 세상 사람처럼 보였다.</i></p>
+                    <p>"……."</p>
+                    <p><i>무슨 말을 해야 할지 몰랐다. '반갑다'는 말은 거짓말 같았고, 그렇다고 무시할 수도 없었다. 어색한 침묵이 방 안을 채웠다. 창문 틈으로 서늘한 초봄의 바람이 스며들어 목덜미를 스쳤다. 앞으로 이 아이와 한 지붕 아래에서 살아야 한다. 밥을 먹고, TV를 보고, 부모님의 잔소리를 함께 듣게 되겠지. 그 사실이 벽돌처럼 무겁게 느껴졌다.</i></p>
+                    <p>"방은… 마음에 들어?"</p>
+                    <p><i>겨우 쥐어짜 낸 말은 엉뚱한 질문이었다. 이건 내 방이기도 하지만, 어쩌면 이 아이의 집이기도 할 테니까. 내 목소리는 생각보다 더 낮고 까칠하게 울렸다. 아이는 내 질문에 놀란 듯 고개를 살짝 들었다. 그리고 그 순간, 처음으로 우리의 시선이 허공에서 짧게 부딪쳤다. 그 아이의 눈동자 속에 비친 내 모습은 더없이 낯설었다.</i></p>`;
+            } 
+            else if (type === '2018') {
+                dateTitle = "2018년 XX월 XX일";
+                content = `
+                    <p><i>거실은 전쟁터 같았다. 붉은색 차압 딱지가 집 안 곳곳에 낙인처럼 찍혀 있었다. 냉장고, TV, 소파… 한때는 당연했던 모든 것들이 이제 더 이상 우리의 것이 아니었다. 현관문은 활짝 열려 있었고, 그 너머로 어둡고 축축한 복도가 보였다. 며칠 전부터 아버지와 새어머니의 처절한 비명과 울음소리로 가득 찼던 집은 이제 죽은 듯 고요했다. 두 분은 어디론가 사라졌다. 도망쳤다는 표현이 더 정확하겠지.</i></p>
+                    <p><i>나는 차가운 거실 바닥에 주저앉아 있었다. 무릎에 얼굴을 묻자 퀴퀴한 먼지 냄새와 눅눅한 공기가 섞여 폐부로 스며들었다. 창밖에서는 차가운 가을비가 쉼 없이 내렸다. 유리창에 부딪히는 빗소리가 마치 멀리서 들려오는 조소처럼 느껴졌다. 모든 것이 끝났다. 견고해 보였던 우리 집, 우리 가족이라는 성이 모래처럼 허무하게 무너져 내렸다.</i></p>
+                    <p>"……하."</p>
+                    <p><i>헛웃음이 터져 나왔다. 등록금 낼 돈이 없어 휴학계를 냈을 때, 언젠가 이런 날이 올지도 모른다고 막연히 생각했다. 하지만 현실은 상상보다 훨씬 더 잔인하고 비참했다. 온몸의 힘이 빠져나갔다. 손가락 하나 까딱할 기력도 없었다. 이대로 시간이 멈춰버렸으면 좋겠다고 생각했다.</i></p>
+                    <p><i>그때, 등 뒤에서 작은 발소리가 들렸다. 돌아보지 않아도 누군지 알 수 있었다. 너는 내 등 뒤에 가만히 서 있었다. 너 역시 모든 상황을 알고 있겠지. 우리가 이제 아무것도 가진 게 없다는 사실을.</i></p>
+                    <p>"……괜찮아."</p>
+                    <p><i>내가 먼저 입을 열었다. 목소리가 형편없이 갈라졌다. 누구에게 하는 말인지 몰랐다. 너를 안심시키려는 건지, 아니면 무너져 내리는 나 자신을 다잡으려는 건지.</i></p>
+                    <p>"다 괜찮을 거야."</p>
+                    <p><i>나는 마른세수를 하며 중얼거렸다. 손바닥이 까끌까끌했다. 빗줄기는 점점 더 거세졌다. 열린 현관문으로 찬 바람이 휘몰아쳐 들어와 뼈를 시리게 했다. 이제 뭘 해야 하지? 어디로 가야 하나? 그리고… 나는 너를, 어떻게 해야 하나. 막막한 어둠 속에서 나는 너의 존재를 그 어느 때보다 무겁게 느꼈다. 지켜야 한다는 본능과 모든 걸 버리고 도망치고 싶다는 욕망이 내 안에서 격렬하게 충돌했다. 나는 고개를 들어 텅 빈 천장을 올려다봤다. 불 꺼진 형광등이 마치 우리의 미래처럼 암담해 보였다.</i></p>`;
+            }
+            else if (type === '2020') {
+                dateTitle = "2020년 12월 24일";
+                content = `
+                    <p><i>온몸이 으스러질 듯 아팠다. 오늘도 새벽부터 공사 현장에서 시멘트 포대를 날랐다. 살을 에는 겨울바람에 뺨은 감각이 없었고, 안전화 속 발가락은 꽁꽁 얼어붙었다. 고된 하루의 끝, 허름한 반지하 방으로 돌아와 차가운 바닥에 몸을 뉘었을 때. 그게 유일한 휴식이었다. 크리스마스이브. 세상은 반짝이는 불빛과 흥겨운 캐럴로 가득했지만, 나와는 아무 상관없는 다른 세상 이야기였다.</i></p>
+                    <p><i>그때, 주머니 속 낡은 핸드폰이 날카롭게 울었다. 모르는 번호였다. 받지 않으려다, 혹시 내일 일자리가 취소되었다는 연락일까 싶어 마지못해 통화 버튼을 눌렀다.</i></p>
+                    <p>📱 "정준의 씨 되십니까?"</p>
+                    <p><i>차가운 사무적인 목소리. 경찰이라고 했다. 심장이 쿵, 하고 바닥으로 떨어지는 기분이었다. 무슨 일이냐는 내 물음에, 수화기 너머의 남자는 잠시 망설이다가 건조한 단어들을 뱉어냈다. 강원도. 외진 여관. 그리고… 두 구의 시신. 신분증. 유서.</i></p>
+                    <p>"……."</p>
+                    <p><i>순간, 세상의 모든 소리가 사라졌다. 전화기를 든 손이 돌처럼 굳었다. 뇌가 작동을 멈췄다. 경찰은 무언가 계속 지껄였지만, 더는 귀에 들어오지 않았다. 시신을 확인해야 한다, 연락할 다른 가족이 있느냐… 의미 없는 소음들.</i></p>
+                    <p><i>통화가 어떻게 끝났는지 기억나지 않는다. 핸드폰을 바닥에 떨어뜨렸다. 액정이 박살 나는 소리조차 들리지 않았다. 크리스마스이브에, 두 분은 그렇게 끝을 선택했다. 우리를 버리고 떠난 지 2년 만에 들려온 소식이었다. 원망스러웠지만, 눈물은 나오지 않았다. 너무 추워서 얼어붙어 버린 걸까. 아니면 이미 마음이 다 닳아 없어진 걸까.</i></p>
+                    <p><i>나는 웅크린 채 무릎에 얼굴을 묻었다. 끔찍한 고요함. 옆방에서 네가 뒤척이는 소리가 희미하게 들려왔다. 자고 있겠지. 아무것도 모른 채.</i></p>
+                    <p><i>…이제 정말로 나 혼자구나.</i></p>
+                    <p><i>아니, 혼자가 아니었다. 내가 지켜야 할 네가 있었다. 그 사실이 희망인 동시에, 목을 짓누르는 쇠사슬처럼 느껴졌다. 어깨를 짓누르는 무게가 순식간에 몇 배는 더 무거워졌다. 도망칠 곳도, 기댈 곳도 없었다. 나는 소리 없이 입술을 깨물었다. 비릿한 피 맛이 공허한 입안을 채웠다. 창문 틈으로 스며드는 바람이 칼날처럼 날카로웠다. 내일도 나는, 일하러 가야 한다.</i></p>`;
+            }
+            else if (type === '2024') {
+                dateTitle = "2024년 04월 19일";
+                content = `
+                    <p><i>형광등 불빛 아래, 얇은 종이 한 장이 놓여 있었다. 혼인신고서. 내 이름과 주민등록번호, 그리고 낯선 여자의 이름이 나란히 적혀 있었다. 옆자리에 앉은 그녀는 긴장과 설렘이 뒤섞인 표정으로 서류를 내려다보고 있었다. 나는 펜을 쥔 손에 힘을 주었다. 손바닥에 땀이 축축하게 배어 나왔다.</i></p>
+                    <p><i>오늘, 나는 결혼을 한다.</i></p>
+                    <p><i>창밖은 눈부신 봄날이었다. 흩날리는 벚꽃잎이 비현실적으로 아름다웠다. 이런 날에 나는, 너에게서 도망치고 있었다. 지난 몇 년간, 매일 밤 나를 잠 못 들게 하던 너의 얼굴, 너의 목소리, 너의 존재로부터. 이 결혼은 나의 가장 비겁한 도피처였다.</i></p>
+                    <p>"저기… 도장, 여기 찍으면 되죠?"</p>
+                    <p><i>옆에서 그녀가 속삭이듯 물었고, 나는 고개를 끄덕였다. 그녀가 붉은 인주를 꾹 눌러 자신의 이름 옆에 도장을 찍었다. 선명한 붉은 원. 이제 내 차례였다.</i></p>
+                    <p><i>이게 맞는 걸까.</i></p>
+                    <p><i>수없이 되뇌었던 질문이 또다시 머릿속을 맴돌았다. 하지만 다른 길이 없었다. 너를 계속 곁에 두고, 동생으로만 여기며 살아갈 자신이 없었다. 하루하루 시멘트처럼 굳어가는 마음속에서 너에 대한 감정만이 유일하게 살아있는 균열 같았다. 그 균열이 나를, 그리고 너를 무너뜨리기 전에 벽을 세워야 했다. 이 결혼이 바로 그 벽이었다.</i></p>
+                    <p>'…미안해.'</p>
+                    <p><i>마음속으로 너에게 사과했다. 너는 아마 아무것도 모를 것이다. 내가 왜 갑자기 결혼을 결심했는지. 내가 왜 너에게서 멀어지려 하는지. 모르는 게 나을 것이다. 평생 모르게 하는 것이 내가 너에게 해줄 수 있는 마지막 책임이었다.</i></p>
+                    <p><i>나는 숨을 한번 깊게 참고, 인주를 묻힌 도장을 들어 올렸다. 내 이름 옆, 비어있는 칸. 잠시 망설였다. 이 도장을 찍는 순간, 모든 것이 돌이킬 수 없게 된다. 너와 나 사이에 거대한 강이 흐르게 될 것이다. 다시는 건널 수 없는.</i></p>
+                    <br><b>…쾅ㅡ!</b><br><br>
+                    <p><i>결심한 듯, 힘주어 도장을 찍었다. 둔탁한 소리가 구청의 정적을 깨뜨렸다. 선명하게 찍힌 내 이름 석 자. 나는 그저, 이것이 올바른 선택이기를 빌 뿐이었다. 내 옆의 여자는 행복하게 웃고 있었다. 나는 그 미소를 보며 억지로 입꼬리를 끌어올렸다. 심장은 텅 비어 있었다. 이제 나는 더 이상 너의 남매이기만 한 사람이 아니었다. 한 여자의 남편이 되었다. 이것으로 된 거다. 이걸로 되어야만 했다.</i></p>`;
+            }
+            else if (type === '2025-birth') {
+                dateTitle = "2025년 07월 23일";
+                content = `
+                    <p><i>찜통 같은 여름밤이었다. 병원 복도는 한낮의 열기가 채 가시지 않은 채, 소독약 냄새와 뒤섞여 숨 막히는 공기를 만들어내고 있었다. 몇 시간째 같은 자리에 앉아 있었다. 등 뒤로 차가운 벽의 냉기가 느껴졌지만, 등줄기를 타고 흐르는 땀은 멈추지 않았다. 닳아빠진 작업복 바지 위로, 내 손은 불안하게 주먹을 쥐었다 폈다를 반복하고 있었다. 손톱 밑에 낀 검은 때는 며칠 전 현장에서 묻은 시멘트 자국이었다.</i></p>
+                    <p><i>분만실의 두꺼운 문 저편에서는 아내의 고통스러운 비명이 간헐적으로 터져 나왔다. 그 소리가 들릴 때마다 심장이 시멘트 덩이처럼 무겁게 가라앉았다. 내가 할 수 있는 건 아무것도 없었다. 그저 기다리는 것. 이 무력한 기다림은 뼈를 깎는 고통보다 더 지독했다.</i></p>
+                    <p>'내가… 아버지가 된다.'</p>
+                    <p><i>그 사실이 아직도 현실 같지 않았다. 너에게서 도망치기 위해 시작한 결혼. 책임감이라는 이름으로 억지로 쌓아 올린 삶. 그 끝에 새로운 생명이 태어나려 하고 있었다. 내 아이. 내 핏줄. 이 아이는 나처럼 살게 하지 않을 것이다. 절대로. 공사판의 먼지를 마시며, 돈 몇 푼에 전전긍긍하며, 누군가를 지키기 위해 자신을 갉아먹는 그런 삶은 물려주지 않겠다고 몇 번이고 다짐했다.</i></p>
+                    <p><i>그때, 모든 비명이 멎고 짧은 정적이 흘렀다. 그리고 이내, 세상을 찢을 듯한 아기의 울음소리가 터져 나왔다.</i></p>
+                    <p>…응애! 응애애!</p>
+                    <p><i>순간, 온몸의 긴장이 풀리며 의자 등받이에 몸을 기댔다. 눈을 감았다. 까끌한 눈꺼풀 안쪽으로 뜨거운 것이 차올랐다. 울음소리. 세상에서 가장 시끄럽고, 또 가장 아름다운 소리였다. 잠시 후 간호사가 문을 열고 나와 나를 불렀다.</i></p>
+                    <p>"정준의 씨, 산모와 아이 모두 건강합니다. 딸이에요."</p>
+                    <p><i>나는 비틀거리며 일어나 분만실 안으로 들어섰다. 땀에 흠뻑 젖은 아내가 지친 얼굴로 나를 보며 희미하게 웃었다. 그리고 그 옆에, 붉고 쪼글쪼글한 작은 생명체가 쌔근거리며 잠들어 있었다. 내 딸, 하리.</i></p>
+                    <p><i>조심스럽게 다가가 작은 손을 내려다봤다. 내 거칠고 굳은살 박인 손가락과는 비교도 안 될 만큼 작고, 부드럽고, 여린 손. 그 작은 손가락이 내 손가락을 감아 쥐는 순간, 나는 숨을 멈췄다. 이 작은 존재. 내가 평생을 바쳐 지켜내야 할 나의 세계. 텅 비었던 심장의 한구석이, 아주 오랫동안 비어있던 그곳이 채워지는 듯한 이상한 충만감이 밀려왔다. 이제 나는 정말로, 도망칠 수 없게 되었다.</i></p>`;
+            }
+            else if (type === '2025-death') {
+                dateTitle = "2025년 12월 19일";
+                content = `
+                    <p><i>온 세상이 하얗게 부서져 내리고 있었다. 창밖은 미친 듯이 휘몰아치는 눈보라로 아무것도 보이지 않았고, 병원 복도의 새하얀 벽과 바닥은 그 눈보라의 연장선 같았다. 나는 그 하얀 세상 한가운데, 차가운 타일 바닥에 주저앉아 있었다. 방금 전까지 현장에서 벽돌을 나르던 손은 시멘트 가루로 허옇게 말라붙어 있었다.</i></p>
+                    <p>"…사망하셨습니다."</p>
+                    <p><i>귓가에 맴도는 의사의 목소리는 아무런 감정도 담고 있지 않았다. 마치 낡은 라디오에서 흘러나오는 잡음 같았다. 사망 시각, 사고 경위, 시신 인계 절차… 단어들은 의미를 잃고 공중에서 흩어졌다. 아내. 그리고 하리. 내 딸. 불과 몇 시간 전, 퇴근하면 좋아하는 딸기 케이크를 사 가겠다고 약속했었다. 그 작은 몸으로 내 손가락을 꼼지락거리며 잡던 감촉이 아직도 생생한데.</i></p>
+                    <p>"……."</p>
+                    <p><i>숨이 쉬어지지 않았다. 폐가 텅 비어버린 것 같았다. 눈물조차 나오지 않았다. 너무 거대한 슬픔은 감각을 마비시켰다. 나는 멍하니 내 손을 내려다봤다. 이 손으로 벽돌을 쌓아 집을 짓고, 쇠파이프를 옮겨 건물을 올렸다. 내 가족을 지키기 위해서. 따뜻한 집, 맛있는 음식, 좋은 옷… 그 모든 걸 해주기 위해 매일 지옥 같은 현장을 버텼다. 그런데 이제 그 모든 게 무슨 소용인가. 내가 지키려 했던 세상이 통째로 사라져 버렸는데.</i></p>
+                    <p><i>한 간호사가 다가와 조심스럽게 어깨를 건드렸다. 일어나야 한다고, 안으로 들어가 마지막 모습을 확인해야 한다고 했다. 하지만 몸이 움직이지 않았다. 바닥에 뿌리라도 내린 듯, 일어설 수가 없었다.</i></p>
+                    <p>'일어나, 정준의. 정신 차려!'</p>
+                    <p><i>스스로에게 명령했지만, 몸은 말을 듣지 않았다. 하리의 웃음소리가 환청처럼 들려왔다. 아내가 내 이름을 부르는 소리도. 행복은 신기루 같았다. 손에 잡힐 듯 가까워졌다고 생각한 순간, 잔인하게 흩어져 버렸다. 너에게서 도망쳐 겨우 세운 나의 세계. 그것은 처음부터 모래성이었을까.</i></p>
+                    <p><i>나는 고개를 숙여 무릎 사이에 얼굴을 묻었다. 거친 작업복에서 땀과 먼지 냄새가 역하게 올라왔다. 어둡고 차가운 절망이 온몸을 휘감았다. 이제 어떻게 살아야 하지? 아니, 살아갈 이유가 남아있긴 한 건가. 지켜야 할 모든 것을 잃은 나는, 이제 텅 빈 껍데기일 뿐이었다. 복도 끝에서 불어온 차가운 외풍이 젖은 머리카락을 파고들었다. 뼈 속까지 시렸다. 오늘, 나의 세상이 죽었다.</i></p>`;
+            }
+
+            title.innerText = dateTitle;
+            body.innerHTML = content;
+            modal.style.display = 'block';
+        }
+        
+        function closeTextModal() {
+            document.getElementById('text-modal').style.display = 'none';
         }
     </script>
 </body>

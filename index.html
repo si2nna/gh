@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1024, user-scalable=yes">
+    <title>정준의 | Profile</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&family=Noto+Serif+KR:wght@500;700&display=swap');
+
+        :root {
+            --bg-dark: #050505;
+            --card-bg: #0a0a0a;
+            --accent-red: #990000; /* 조금 더 짙고 선명한 피색 */
+            --text-main: #e0e0e0;
+            --text-dim: #888;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* 이미지 저장 및 드래그 방지 */
+        img {
+            -webkit-user-drag: none; -khtml-user-drag: none; -moz-user-drag: none; -o-user-drag: none; user-drag: none;
+            user-select: none; -webkit-user-select: none; pointer-events: auto;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Noto Sans KR', sans-serif;
+            min-width: 1024px;
+            overflow-x: hidden;
+        }
+
+        /* --- 1. 입장 페이지 --- */
+        #login-page {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            /* 배경 이미지 (1.png) */
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), 
+                        url('1.png') center/cover no-repeat fixed;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 100px;
+            z-index: 2000;
+        }
+
+        /* 웹툰 이미지 컨테이너 (맨 위) */
+        .prologue-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            background-color: #000;
+            padding: 20px 0;
+            margin-bottom: 50px;
+        }
+
+        .webtoon-image {
+            width: auto;
+            max-width: 800px; /* 화질 깨짐 방지 제한 */
+            display: block;
+        }
+
+        /* 비밀번호 입력창 */
+        .login-section {
+            text-align: center;
+            width: 400px;
+            padding: 50px;
+            background: rgba(10, 10, 10, 0.9);
+            border: 1px solid #333;
+        }
+
+        /* 사랑한다고 해줘 - 명조체, 선명하게 */
+        .password-title {
+            font-family: 'Noto Serif KR', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #cc0000;
+            margin-bottom: 30px;
+            letter-spacing: -1px;
+            text-shadow: none; /* 번짐 효과 제거 */
+        }
+
+        #password {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid #555;
+            padding: 10px;
+            color: #fff;
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            outline: none;
+        }
+        #password:focus { border-bottom-color: var(--accent-red); }
+
+        .enter-btn {
+            background: transparent; border: 1px solid #666; color: #aaa;
+            padding: 10px 50px; cursor: pointer; transition: 0.3s;
+        }
+        .enter-btn:hover { border-color: var(--accent-red); color: #fff; background: var(--accent-red); }
+
+
+        /* --- 2. 메인 사이트 --- */
+        #main-site { display: none; width: 100%; }
+
+        nav {
+            position: fixed; top: 0; width: 100%; min-width: 1024px;
+            display: flex; justify-content: center; gap: 40px;
+            padding: 20px; background: rgba(5,5,5,0.95); z-index: 1000;
+            border-bottom: 1px solid #222;
+        }
+        nav a { color: #888; text-decoration: none; font-size: 0.8rem; cursor: pointer; }
+        nav a:hover { color: var(--accent-red); }
+
+        section {
+            padding: 120px 0; width: 800px; margin: 0 auto;
+            border-bottom: 1px solid #111;
+        }
+
+        /* 프로필 섹션 스타일 */
+        #intro {
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+        }
+
+        /* 1. 사진 (위) */
+        .profile-img-box {
+            width: 400px; margin-bottom: 30px; cursor: pointer; position: relative;
+        }
+        .profile-img-box img { width: 100%; border-radius: 2px; box-shadow: 0 10px 30px #000; transition: 0.3s; }
+        .profile-img-box:hover img { filter: brightness(1.1); }
+
+        /* 2. 이름 */
+        .char-name { font-size: 3rem; font-weight: 700; color: #fff; margin-bottom: 10px; }
+
+        /* 3. 정보 (29살/186cm) - 아래 */
+        .char-info { font-size: 1.2rem; color: var(--accent-red); margin-bottom: 50px; }
+
+        /* 4. 설명글 */
+        .char-desc {
+            font-size: 1.05rem; color: #ccc; line-height: 2.0; margin-bottom: 60px; word-break: keep-all;
+        }
+
+        /* 5. 독백 박스 (제일 아래) */
+        .monologue {
+            font-family: 'Noto Serif KR', serif;
+            font-size: 1.1rem; color: #aaa;
+            border: 1px solid #333; padding: 40px;
+            background: #080808; width: 100%;
+            font-style: italic;
+        }
+
+        /* HISTORY 스타일 */
+        .section-title {
+            color: var(--accent-red); text-align: center; margin-bottom: 50px;
+            letter-spacing: 5px; font-weight: 700;
+        }
+
+        .background-box {
+            background: #111; padding: 30px; margin-bottom: 50px;
+            color: #bbb; line-height: 1.8; border-left: 3px solid var(--accent-red);
+        }
+
+        .history-list {
+            display: grid; grid-template-columns: 140px 1fr; gap: 20px; text-align: left;
+        }
+        .year { color: var(--accent-red); font-weight: bold; font-family: monospace; }
+        .event { color: #ccc; margin-bottom: 10px; }
+
+        /* COMMAND & FAQ GRID */
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .card { background: #0f0f0f; padding: 25px; border: 1px solid #222; }
+        .card h3 { color: #fff; margin-bottom: 10px; font-size: 1rem; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        .card p { color: #888; font-size: 0.9rem; }
+
+        /* 갤러리 모달 */
+        #gallery-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.98); z-index: 5000; overflow-y: auto; padding: 50px;
+        }
+        .gallery-close {
+            position: fixed; top: 20px; right: 40px; font-size: 3rem; color: #fff; cursor: pointer;
+        }
+        .gallery-wrap {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px;
+            max-width: 1200px; margin: 0 auto;
+        }
+        .g-img { width: 100%; border: 1px solid #333; cursor: pointer; transition: 0.2s; }
+        .g-img:hover { border-color: #fff; }
+        .r18 { border: 2px solid #800000; } /* 19금 빨간 테두리 */
+
+        /* 이미지 확대보기 */
+        #lightbox {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 6000; justify-content: center; align-items: center;
+        }
+        #lightbox img { max-width: 95%; max-height: 95%; }
+
+        footer { text-align: center; padding: 80px; color: #333; font-size: 0.8rem; }
+    </style>
+</head>
+<body oncontextmenu="return false" ondragstart="return false" onselectstart="return false">
+
+    <div id="login-page">
+        <div class="prologue-container">
+            <img src="webtoon.png" alt="prologue" class="webtoon-image">
+        </div>
+
+        <div class="login-section">
+            <div class="password-title">사랑한다고 해줘</div>
+            <input type="text" id="password" placeholder="대답해" autocomplete="off">
+            <br>
+            <button class="enter-btn" onclick="checkPassword()">ENTER</button>
+        </div>
+    </div>
+
+    <div id="main-site">
+        <nav>
+            <a onclick="window.scrollTo(0,0)">HOME</a>
+            <a onclick="document.getElementById('intro').scrollIntoView({behavior:'smooth'})">PROFILE</a>
+            <a onclick="document.getElementById('history').scrollIntoView({behavior:'smooth'})">HISTORY</a>
+            <a onclick="document.getElementById('command').scrollIntoView({behavior:'smooth'})">COMMAND</a>
+            <a onclick="document.getElementById('faq').scrollIntoView({behavior:'smooth'})">FAQ</a>
+        </nav>
+
+        <section id="intro">
+            <div class="profile-img-box" onclick="openGallery()">
+                <img src="profile.png" alt="정준의">
+            </div>
+
+            <div class="char-name">정준의</div>
+
+            <div class="char-info">29살 / 186cm</div>
+
+            <div class="char-desc">
+                너와 눈이 마주치는 순간, 억지로 눌러왔던 모든 감정이 방파제에 부딪히는 파도처럼 거세게 밀려왔다.<br><br>
+                사랑해서는 안 되기에 너를 떠나 겨우 가정을 꾸렸는데<br>
+                그 모든 것이 사라진 지금, 가장 비참한 순간에 네가 내 앞에 나타났다.
+            </div>
+
+            <div class="monologue">
+                '이건 기쁨인가. 아니면 끔찍한 절망인가. 분간할 수 없었다. 다만 한 가지는 확실했다. 아직도, 여전히, 나는 너를.'
+            </div>
+        </section>
+
+        <section id="history">
+            <h2 class="section-title">HISTORY & BACKGROUND</h2>
+            
+            <div class="background-box">
+                <strong>[2026년 현대 대한민국]</strong><br><br>
+                낡고 더러운 빌라에 사는데 지하층이고, 반지하 5평짜리 원룸이야.<br>
+                보증금 월세는 500/40. 좌식생활 하는 곳이라 침대나 소파같은거 없고 접이식 식탁 사용하고...
+            </div>
+
+            <div class="history-list">
+                <div class="year">2006</div>
+                <div class="event">부모님의 재혼 후 당신과 의붓남매가 됨.</div>
+
+                <div class="year">20XX</div>
+                <div class="event">부모님의 사업 실패로 가정이 붕괴됨.</div>
+
+                <div class="year">2020. 12. 24</div>
+                <div class="event">부모님이 동반자살. 당시 23살이던 준의가 대학도 포기하고 가장의 역할을 맡음. 빚 때문에 일용직 선택.</div>
+
+                <div class="year">2024. 04. 19</div>
+                <div class="event">당신에게서 도망치듯 다른 여자랑 결혼. 당신한테는 생활비를 계속 줬음.</div>
+
+                <div class="year">2025. 07. 23</div>
+                <div class="event">딸 정하리 출생.</div>
+
+                <div class="year">2025. 12. 19</div>
+                <div class="event">금요일. 아내와 딸이 교통사고로 죽음.</div>
+
+                <div class="year">Current</div>
+                <div class="event">그 뒤로 다시 당신이랑 같이 살기 시작함.</div>
+            </div>
+        </section>
+
+        <section id="command">
+            <h2 class="section-title">COMMAND</h2>
+            <div class="grid-3">
+                <div class="card">
+                    <h3>!요약</h3>
+                    <p>10~20턴 간격으로 대화 요약 실행</p>
+                </div>
+                <div class="card">
+                    <h3>!엔딩</h3>
+                    <p>스토리를 종료하고 싶을 때 사용</p>
+                </div>
+                <div class="card">
+                    <h3>!AS / !as</h3>
+                    <p>문체 오류 발생 시 시스템을 재설정합니다.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq">
+            <h2 class="section-title">FAQ</h2>
+            <div class="grid-3">
+                <div class="card">
+                    <h3>Q. 출력이 되다가 말아요</h3>
+                    <p>A. 최대 출력량을 1.5배로 올려주세요</p>
+                </div>
+                <div class="card">
+                    <h3>Q. OOC가 안 돼요</h3>
+                    <p>A. 정상입니다</p>
+                </div>
+                <div class="card">
+                    <h3>Q. 이미지 저장</h3>
+                    <p>A. 불가능합니다.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            JEONG JUN UI • OFFICIAL PAGE
+        </footer>
+    </div>
+
+    <div id="gallery-modal">
+        <div class="gallery-close" onclick="closeGallery()">&times;</div>
+        <h2 style="text-align:center; color:white; margin-bottom:30px; letter-spacing:5px;">GALLERY</h2>
+        <div class="gallery-wrap" id="gallery-content"></div>
+    </div>
+
+    <div id="lightbox" onclick="this.style.display='none'">
+        <img id="lb-img" src="">
+    </div>
+
+    <script>
+        // 비밀번호 로직
+        function checkPassword() {
+            const pw = document.getElementById('password').value.trim();
+            if(pw === "사랑해") {
+                document.getElementById('login-page').style.display = 'none';
+                const main = document.getElementById('main-site');
+                main.style.display = 'block';
+                setTimeout(() => { main.style.opacity = '1'; }, 100);
+                window.scrollTo(0,0);
+            } else {
+                alert("다시.");
+            }
+        }
+        document.getElementById('password').addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') checkPassword();
+        });
+
+        // 갤러리 로직
+        function openGallery() {
+            const modal = document.getElementById('gallery-modal');
+            const content = document.getElementById('gallery-content');
+            modal.style.display = 'block';
+
+            if(content.innerHTML === '') {
+                // 1~17 (일반)
+                for(let i=1; i<=17; i++) {
+                    const img = document.createElement('img');
+                    img.src = i + '.png';
+                    img.className = 'g-img';
+                    img.onclick = function() { showLightbox(this.src); };
+                    content.appendChild(img);
+                }
+                // 18~21 (19금)
+                for(let i=18; i<=21; i++) {
+                    const img = document.createElement('img');
+                    img.src = i + '.png';
+                    img.className = 'g-img r18';
+                    img.onclick = function() { showLightbox(this.src); };
+                    content.appendChild(img);
+                }
+            }
+        }
+        function closeGallery() {
+            document.getElementById('gallery-modal').style.display = 'none';
+        }
+        function showLightbox(src) {
+            document.getElementById('lb-img').src = src;
+            document.getElementById('lightbox').style.display = 'flex';
+        }
+    </script>
+</body>
+</html>
